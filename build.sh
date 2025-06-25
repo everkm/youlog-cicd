@@ -2,14 +2,33 @@
 
 set -e
 
-REPO=git@github.com:jcold/youlog-dayu.git
-TAG=youlog-www@v0.1.1
-SRC_DIR=youlog-www
-YOULOG_VERSION=0.1.1
+if [ $# -ne 6 ]; then
+    echo "用法: $0 <member> <youlog> <version> <repo> <tag> <sub_dir>"
+    echo "示例: $0 dayu haowen 0.0.1 https://github.com/jcold/youlog-press.git haowen@v0.0.1 haowen"
+    exit 1
+fi
 
-cd /Users/dayu/tmp/cicd
+MEMBER="$1"
+YOULOG="$2"
+YOULOG_VERSION="$3"
 
-export PATH=/Users/dayu/tmp/cicd:$PATH
+REPO="$4"
+TAG="$5"
+SUB_DIR="$6"
+
+CURRENT_DIR=$(pwd)
+BUILD_DIR="$CURRENT_DIR/tmp"
+
+if [ ! -d "$BUILD_DIR" ]; then
+    echo "BUILD_DIR 不存在，请先运行 setup_env.sh"
+    exit 1
+fi
+
+cd $BUILD_DIR
+echo "当前目录: $CURRENT_DIR"
+CURRENT_DIR=$(pwd)
+
+export PATH=$CURRENT_DIR:$PATH
 
 # 克隆指定 tag 到 src 目录
 echo "正在克隆 tag: $TAG 到 src 目录..."
@@ -40,10 +59,10 @@ fi
 
 
 /Users/dayu/Coder/everkm/everkm2/be/everkm-publish/target/debug/everkm-publish serve \
-		--work-dir ./src/$SRC_DIR \
-		--base-prefix /dayu/haowen/v${YOULOG_VERSION}/ \
-		--cdn-prefix https://assets.daobox.cc/yl-member/dayu/haowen/ \
-		--theme-dir youlog \
+		--work-dir ./src/$SUB_DIR \
+		--base-prefix /$MEMBER/$YOULOG/v${YOULOG_VERSION}/ \
+		--cdn-prefix https://assets.daobox.cc/yl-member/$MEMBER/$YOULOG/ \
+		--theme-dir ./youlog \
 		--export
 
 

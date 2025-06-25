@@ -2,11 +2,14 @@
 
 set -e
 
-if [ -d "/Users/dayu/tmp/cicd" ]; then
-    rm -rf /Users/dayu/tmp/cicd
+CURRENT_DIR=$(pwd)
+BUILD_DIR="$CURRENT_DIR/tmp"
+
+if [ -d "$BUILD_DIR" ]; then
+    rm -rf $BUILD_DIR
 fi
-mkdir -p /Users/dayu/tmp/cicd
-cd /Users/dayu/tmp/cicd
+mkdir -p $BUILD_DIR
+cd $BUILD_DIR
 
 # download qshell
 # wget https://github.com/qiniu/qshell/releases/download/v2.16.1/qshell-v2.16.1-linux-arm64.tar.gz
