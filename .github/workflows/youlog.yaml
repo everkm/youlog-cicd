@@ -1,0 +1,58 @@
+name: CICD
+
+on:
+  workflow_dispatch:
+    inputs:
+      member:
+        description: 'Member'
+        required: true
+      youlog:
+        description: 'Youlog'
+        required: true
+      version:
+        description: 'Version'
+        required: true
+      repo:
+        description: 'Repo'
+        required: true
+      tag:
+        description: 'Tag'
+        required: true
+      sub_dir:
+        description: 'Sub Dir'
+        required: true
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    # permissions:
+    #   contents: write
+
+    # strategy:
+    #   matrix:
+    #     node-version: [20.x]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+
+    - name: dist
+      run: |
+        echo "${{ secrets.SSH_KEY_DEPLOY }}" > id_rsa_daobox
+        make all-in-one MEMBER=${{ inputs.member }} YOULOG=${{ inputs.youlog }} VERSION=${{ inputs.version }} REPO=${{ inputs.repo }} TAG=${{ inputs.tag }} SUB_DIR=${{ inputs.sub_dir }}
+
+
+    - uses: addnab/docker-run-action@v3
+      with:
+        image: instrumentisto/rsync-ssh
+        options: -v ${{ github.workspace }}:/work -e ABC=123
+        run: |
+          echo "Running rsync"
+          cd /work/tmp
+          ssh -i /work/id_rsa_daobox -p 11022 root@y5.everkm.cn "mkdir -p /data/www/youlog-www/${MEMBER}/${YOULOG}"
+          scp -i /work/id_rsa_daobox -P 11022 ${YOULOG}@v${VERSION}.zip root@y5.everkm.cn:/data/www/youlog-www/${MEMBER}/${YOULOG}/
+        
+
