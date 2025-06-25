@@ -51,10 +51,10 @@ jobs:
         chmod 700 ~/.ssh
         touch ~/.ssh/known_hosts
         chmod 600 ~/.ssh/known_hosts
-        ssh-keyscan y5.everkm.cn >> ~/.ssh/known_hosts
+        ssh-keyscan -p 11022 y5.everkm.com >> ~/.ssh/known_hosts
 
-        ssh -i id_rsa_daobox -p 11022 root@y5.everkm.cn "mkdir -p /data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}"
-        scp -i id_rsa_daobox -P 11022 ${{ inputs.youlog }}@${{ inputs.version }}.zip root@y5.everkm.cn:/data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}/
+        ssh -i id_rsa_daobox -p 11022 root@y5.everkm.com "mkdir -p /data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}"
+        scp -i id_rsa_daobox -P 11022 ${{ inputs.youlog }}@${{ inputs.version }}.zip root@y5.everkm.com:/data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}/
 
     # - uses: addnab/docker-run-action@v3
     #   with:
@@ -64,7 +64,7 @@ jobs:
     #       echo "Running rsync"
     #       set -e
     #       cd /work/tmp
-    #       ssh -i /work/id_rsa_daobox -p 11022 root@y5.everkm.cn "mkdir -p /data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}"
-    #       scp -i /work/id_rsa_daobox -P 11022 ${{ inputs.youlog }}@${{ inputs.version }}.zip root@y5.everkm.cn:/data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}/
+    #       ssh -i /work/id_rsa_daobox -p 11022 root@y5.everkm.com "mkdir -p /data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}"
+    #       scp -i /work/id_rsa_daobox -P 11022 ${{ inputs.youlog }}@${{ inputs.version }}.zip root@y5.everkm.com:/data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}/
         
 
