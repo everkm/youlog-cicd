@@ -43,6 +43,11 @@ if [ ! -d "$TARGET_DIR" ]; then
 fi
 
 
+# 如果 QINIU_ACCESS_KEY 和 QINIU_SECRET_KEY 未设置，则使用 qshell 登录
+if [ -z "$QINIU_ACCESS_KEY" ] && [ -z "$QINIU_SECRET_KEY" ]; then
+    qshell account $QINIU_ACCESS_KEY $QINIU_SECRET_KEY everkm -w
+fi
+
 # 上传CDN
 qshell qupload2 \
     --src-dir=$TARGET_DIR/assets/ \
