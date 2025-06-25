@@ -35,7 +35,11 @@ echo "正在克隆 tag: $TAG 到 src 目录..."
 if [ -d "src" ]; then
     rm -rf src
 fi
-git clone --depth 1 --single-branch --branch $TAG $REPO src
+
+export GIT_CONFIG_PARAMETERS="'advice.detachedHead=false'"
+
+# 直接克隆指定 tag
+git clone --quiet --depth 1 --single-branch --branch $TAG $REPO src
 
 # 检查克隆是否成功
 if [ $? -eq 0 ]; then
@@ -43,8 +47,8 @@ if [ $? -eq 0 ]; then
     
     # 进入 src 目录并创建新分支
     cd src
-    echo "基于 tag $TAG 创建新分支: $TAG-branch"
-    git checkout -b $TAG-branch
+    # echo "基于 tag $TAG 创建新分支: $TAG-branch"
+    # git checkout --quiet -b $TAG-branch
     
     # 验证当前状态
     echo "当前分支: $(git branch --show-current)"
@@ -56,8 +60,6 @@ else
     exit 1
 fi
 
-
-
 export EVERKM_LOG=error
 
 everkm-publish serve \
@@ -67,6 +69,10 @@ everkm-publish serve \
 		--theme-dir ./youlog \
         --dist-dir $CURRENT_DIR/dist-pages \
 		--export
+
+COUNT=$(find $CURRENT_DIR/dist-pages/ -type f -name "*.html" | wc -l)
+echo "产出 HTML 文件: $COUNT 个"
+
 
 
 
