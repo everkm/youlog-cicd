@@ -46,7 +46,13 @@ jobs:
         export QINIU_SECRET_KEY=${{ secrets.QINIU_SECRET_KEY }}
         make all-in-one MEMBER=${{ inputs.member }} YOULOG=${{ inputs.youlog }} VERSION=${{ inputs.version }} REPO=${{ inputs.repo }} TAG=${{ inputs.tag }} SUB_DIR=${{ inputs.sub_dir }}
 
+        # 配置 ssh 密钥
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+        touch ~/.ssh/known_hosts
+        chmod 600 ~/.ssh/known_hosts
         ssh-keyscan y5.everkm.cn >> ~/.ssh/known_hosts
+
         ssh -i id_rsa_daobox -p 11022 root@y5.everkm.cn "mkdir -p /data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}"
         scp -i id_rsa_daobox -P 11022 ${{ inputs.youlog }}@${{ inputs.version }}.zip root@y5.everkm.cn:/data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}/
 
