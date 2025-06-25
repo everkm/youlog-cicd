@@ -22,7 +22,7 @@ QSHELL_SUFFIX=""
 
 if [ "$(uname)" == "Darwin" ]; then
     EKMP_SUFFIX="darwin-universal"
-    QSHELL_SUFFIX="darwin-arm64"
+    QSHELL_SUFFIX="darwin-amd64"
 elif [ "$(uname)" == "Linux" ]; then
     EKMP_SUFFIX="linux-amd64"
     QSHELL_SUFFIX="linux-amd64"
@@ -30,7 +30,6 @@ else
     echo "不支持的操作系统"
     exit 1
 fi
-
 
 # download qshell
 # wget https://github.com/qiniu/qshell/releases/download/v2.16.1/qshell-v2.16.1-linux-arm64.tar.gz
