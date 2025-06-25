@@ -1,11 +1,18 @@
+MEMBER=dayu
+YOULOG=haowen
+VERSION=0.0.1
+REPO=https://github.com/jcold/youlog-press.git
+TAG="haowen@v0.0.1"
+SUB_DIR=haowen
+
 setup:
 	./setup_env.sh
 
 pages:
-	./build.sh dayu haowen 0.0.1 https://github.com/jcold/youlog-press.git "haowen@v0.0.1" haowen
+	./build.sh $(MEMBER) $(YOULOG) $(VERSION) $(REPO) $(TAG) $(SUB_DIR)
 
 youlog:
-	./make_gz.sh dayu haowen 0.0.1 
+	./make_gz.sh $(MEMBER) $(YOULOG) $(VERSION)
 
 all-in-one:
 	make setup
