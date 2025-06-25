@@ -2,6 +2,11 @@
 
 set -e
 
+# 工具版本号
+EVERKM_PUBLISH_VERSION="0.14.0"
+THEME_YOULOG_VERSION="0.2.3"
+QSHELL_VERSION="2.16.1"
+
 CURRENT_DIR=$(pwd)
 BUILD_DIR="$CURRENT_DIR/tmp"
 
@@ -29,8 +34,8 @@ fi
 
 # download qshell
 # wget https://github.com/qiniu/qshell/releases/download/v2.16.1/qshell-v2.16.1-linux-arm64.tar.gz
-wget https://github.com/qiniu/qshell/releases/download/v2.16.1/qshell-v2.16.1-${QSHELL_SUFFIX}.tar.gz
-tar -zxvf qshell-v2.16.1-${QSHELL_SUFFIX}.tar.gz
+wget --quiet https://github.com/qiniu/qshell/releases/download/v${QSHELL_VERSION}/qshell-v${QSHELL_VERSION}-${QSHELL_SUFFIX}.tar.gz
+tar -zxvf qshell-v${QSHELL_VERSION}-${QSHELL_SUFFIX}.tar.gz
 # mv qshell-v2.16.1-${QSHELL_SUFFIX}/qshell ./qshell
 
 
@@ -43,26 +48,26 @@ tar -zxvf qshell-v2.16.1-${QSHELL_SUFFIX}.tar.gz
 echo "正在获取 everkm-publish 最新版本信息..."
 
 # 获取最新版本信息
-LATEST_RELEASE=$(curl -s https://api.github.com/repos/everkm/publish/releases/latest)
+# LATEST_RELEASE=$(curl -s https://api.github.com/repos/everkm/publish/releases/latest)
 
 # 提取 tag_name 中的版本号
-TAG_NAME=$(echo "$LATEST_RELEASE" | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
-VERSION=$(echo "$TAG_NAME" | sed 's/everkm-publish@v//')
-echo "Everkm-Publish 最新版本: $VERSION"
+# TAG_NAME=$(echo "$LATEST_RELEASE" | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
+# VERSION=$(echo "$TAG_NAME" | sed 's/everkm-publish@v//')
+# echo "Everkm-Publish 最新版本: $VERSION"
 
 # 构建下载地址
-DOWNLOAD_URL="https://github.com/everkm/publish/releases/download/everkm-publish%40v${VERSION}/EverkmPublish_${VERSION}_${EKMP_SUFFIX}.zip"
+DOWNLOAD_URL="https://github.com/everkm/publish/releases/download/everkm-publish%40v${EVERKM_PUBLISH_VERSION}/EverkmPublish_${EVERKM_PUBLISH_VERSION}_${EKMP_SUFFIX}.zip"
 
 echo "下载地址: $DOWNLOAD_URL"
 
 # 下载文件
-wget "$DOWNLOAD_URL" -O "EverkmPublish_${VERSION}_${EKMP_SUFFIX}.zip"
+wget --quiet "$DOWNLOAD_URL" -O "EverkmPublish_${EVERKM_PUBLISH_VERSION}_${EKMP_SUFFIX}.zip"
 
 # 解压文件
-unzip "EverkmPublish_${VERSION}_${EKMP_SUFFIX}.zip"
+unzip "EverkmPublish_${EVERKM_PUBLISH_VERSION}_${EKMP_SUFFIX}.zip"
 
 # 移动 EverkmPublish 文件到当前目录
-mv EverkmPublish_${VERSION}_${EKMP_SUFFIX}/everkm-publish ./everkm-publish
+mv EverkmPublish_${EVERKM_PUBLISH_VERSION}_${EKMP_SUFFIX}/everkm-publish ./everkm-publish
 
 # 设置执行权限
 chmod +x ./everkm-publish
@@ -75,20 +80,20 @@ chmod +x ./everkm-publish
 # 拼接下载地址 https://github.com/everkm/theme-youlog/releases/download/v0.1.0/theme-youlog-v0.1.0.zip
 # 解析压缩包, 获取 theme-youlog 文件
 
-echo "正在获取 theme-youlog 最新版本信息..."
+# echo "正在获取 theme-youlog 最新版本信息..."
 
-# 获取最新版本信息
-LATEST_RELEASE=$(curl -s https://api.github.com/repos/everkm/theme-youlog/releases/latest)
+# # 获取最新版本信息
+# LATEST_RELEASE=$(curl -s https://api.github.com/repos/everkm/theme-youlog/releases/latest)
 
-# 提取 tag_name 中的版本号
-TAG_NAME=$(echo "$LATEST_RELEASE" | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
-VERSION=$(echo "$TAG_NAME" | sed 's/v//')
-echo "Theme-Youlog 最新版本: $VERSION"
+# # 提取 tag_name 中的版本号
+# TAG_NAME=$(echo "$LATEST_RELEASE" | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
+# VERSION=$(echo "$TAG_NAME" | sed 's/v//')
+# echo "Theme-Youlog 最新版本: $VERSION"
 
 # 构建下载地址
 # https://github.com/everkm/theme-youlog/releases/download/v0.2.3/youlog.zip
-DOWNLOAD_URL="https://github.com/everkm/theme-youlog/releases/download/v${VERSION}/youlog.zip"
-wget "$DOWNLOAD_URL" -O "youlog.zip"
+DOWNLOAD_URL="https://github.com/everkm/theme-youlog/releases/download/v${THEME_YOULOG_VERSION}/youlog.zip"
+wget --quiet "$DOWNLOAD_URL" -O "youlog.zip"
 
 unzip "youlog.zip"
 

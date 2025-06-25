@@ -58,7 +58,7 @@ fi
 
 
 
-/Users/dayu/Coder/everkm/everkm2/be/everkm-publish/target/debug/everkm-publish serve \
+everkm-publish serve \
 		--work-dir ./src/$SUB_DIR \
 		--base-prefix /$MEMBER/$YOULOG/v${YOULOG_VERSION}/ \
 		--cdn-prefix https://assets.daobox.cc/yl-member/$MEMBER/$YOULOG/ \
