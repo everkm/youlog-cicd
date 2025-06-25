@@ -54,7 +54,7 @@ jobs:
         run: |
           echo "Running rsync"
           cd /work/tmp
-          ssh -i /work/id_rsa_daobox -p 11022 root@y5.everkm.cn "mkdir -p /data/www/youlog-www/${MEMBER}/${YOULOG}"
-          scp -i /work/id_rsa_daobox -P 11022 ${YOULOG}@v${VERSION}.zip root@y5.everkm.cn:/data/www/youlog-www/${MEMBER}/${YOULOG}/
+          ssh -i /work/id_rsa_daobox -p 11022 root@y5.everkm.cn "mkdir -p /data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}"
+          scp -i /work/id_rsa_daobox -P 11022 ${{ inputs.youlog }}@v${{ inputs.version }}.zip root@y5.everkm.cn:/data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}/
         
 
