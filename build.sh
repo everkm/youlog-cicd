@@ -71,7 +71,7 @@ everkm-publish serve \
 		--export
 
 COUNT=$(find $CURRENT_DIR/dist-pages/ -type f -name "*.html" | wc -l)
-echo "产出 HTML 文件: $COUNT 个"
+echo 产出 HTML 文件: $COUNT 个
 
 
 
