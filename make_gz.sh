@@ -4,9 +4,9 @@
 set -e
 
 # 检查参数
-if [ $# -ne 4 ]; then
-    echo "用法: $0 <member> <youlog> <version> <目标目录>"
-    echo "示例: $0 dayu haowen 0.0.1 dist"
+if [ $# -ne 3 ]; then
+    echo "用法: $0 <member> <youlog> <version>"
+    echo "示例: $0 dayu haowen 0.0.1"
     exit 1
 fi
 
@@ -25,15 +25,14 @@ CURRENT_DIR=$(pwd)
 MEMBER="$1"
 YOULOG="$2"
 VERSION="$3"
-TARGET_DIR="$4"
+
+TARGET_DIR="$BUILD_DIR/dist-pages"
 
 
 ZIP_NAME="${YOULOG}@${VERSION}.zip"
 YOULOG_DIR="$MEMBER/$YOULOG"
 VERSION_DIR="${YOULOG_DIR}/v$VERSION"
 
-# 转换 TARGET_DIR 为绝对路径
-TARGET_DIR=$(realpath "$TARGET_DIR")
 
 echo "开始处理目录: $TARGET_DIR"
 

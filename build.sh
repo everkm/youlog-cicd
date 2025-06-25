@@ -63,6 +63,7 @@ fi
 		--base-prefix /$MEMBER/$YOULOG/v${YOULOG_VERSION}/ \
 		--cdn-prefix https://assets.daobox.cc/yl-member/$MEMBER/$YOULOG/ \
 		--theme-dir ./youlog \
+        --dist-dir $CURRENT_DIR/dist-pages \
 		--export
 
 

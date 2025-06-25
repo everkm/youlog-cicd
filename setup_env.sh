@@ -11,17 +11,33 @@ fi
 mkdir -p $BUILD_DIR
 cd $BUILD_DIR
 
+# EVERKM-PUBLISH SUFFIX
+EKMP_SUFFIX=""
+QSHELL_SUFFIX=""
+
+if [ "$(uname)" == "Darwin" ]; then
+    EKMP_SUFFIX="darwin-universal"
+    QSHELL_SUFFIX="darwin-arm64"
+elif [ "$(uname)" == "Linux" ]; then
+    EKMP_SUFFIX="linux-amd64"
+    QSHELL_SUFFIX="linux-amd64"
+else
+    echo "不支持的操作系统"
+    exit 1
+fi
+
+
 # download qshell
 # wget https://github.com/qiniu/qshell/releases/download/v2.16.1/qshell-v2.16.1-linux-arm64.tar.gz
-wget https://github.com/qiniu/qshell/releases/download/v2.16.1/qshell-v2.16.1-darwin-arm64.tar.gz
-tar -zxvf qshell-v2.16.1-darwin-arm64.tar.gz
-# mv qshell-v2.16.1-darwin-arm64/qshell ./qshell
+wget https://github.com/qiniu/qshell/releases/download/v2.16.1/qshell-v2.16.1-${QSHELL_SUFFIX}.tar.gz
+tar -zxvf qshell-v2.16.1-${QSHELL_SUFFIX}.tar.gz
+# mv qshell-v2.16.1-${QSHELL_SUFFIX}/qshell ./qshell
 
 
 # 安装 everkm-publish
 # https://api.github.com/repos/everkm/publish/releases/latest
 # 获取 `"tag_name": "everkm-publish@v0.14.0"` 中, v0.14.0 的值
-# 拼接下载地址 https://github.com/everkm/publish/releases/download/everkm-publish%40v0.14.0/EverkmPublish_0.14._darwin-universal.zip
+# 拼接下载地址 https://github.com/everkm/publish/releases/download/everkm-publish%40v0.14.0/EverkmPublish_0.14._${EKMP_SUFFIX}.zip
 # 解析压缩包, 获取 EverkmPublish 文件
 
 echo "正在获取 everkm-publish 最新版本信息..."
@@ -35,18 +51,18 @@ VERSION=$(echo "$TAG_NAME" | sed 's/everkm-publish@v//')
 echo "Everkm-Publish 最新版本: $VERSION"
 
 # 构建下载地址
-DOWNLOAD_URL="https://github.com/everkm/publish/releases/download/everkm-publish%40v${VERSION}/EverkmPublish_${VERSION}_darwin-universal.zip"
+DOWNLOAD_URL="https://github.com/everkm/publish/releases/download/everkm-publish%40v${VERSION}/EverkmPublish_${VERSION}_${EKMP_SUFFIX}.zip"
 
 echo "下载地址: $DOWNLOAD_URL"
 
 # 下载文件
-wget "$DOWNLOAD_URL" -O "EverkmPublish_${VERSION}_darwin-universal.zip"
+wget "$DOWNLOAD_URL" -O "EverkmPublish_${VERSION}_${EKMP_SUFFIX}.zip"
 
 # 解压文件
-unzip "EverkmPublish_${VERSION}_darwin-universal.zip"
+unzip "EverkmPublish_${VERSION}_${EKMP_SUFFIX}.zip"
 
 # 移动 EverkmPublish 文件到当前目录
-mv EverkmPublish_${VERSION}_darwin-universal/everkm-publish ./everkm-publish
+mv EverkmPublish_${VERSION}_${EKMP_SUFFIX}/everkm-publish ./everkm-publish
 
 # 设置执行权限
 chmod +x ./everkm-publish
