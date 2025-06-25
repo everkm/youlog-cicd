@@ -18,7 +18,7 @@ if [ ! -d "$BUILD_DIR" ]; then
 fi
 
 cd $BUILD_DIR
-echo "当前目录: $CURRENT_DIR"
+# echo "当前目录: $CURRENT_DIR"
 CURRENT_DIR=$(pwd)
 
 export PATH=$CURRENT_DIR:$PATH
@@ -46,15 +46,17 @@ fi
 
 # 如果 QINIU_ACCESS_KEY 和 QINIU_SECRET_KEY 未设置，则跳过上传
 if [ -z "$QINIU_ACCESS_KEY" ] || [ -z "$QINIU_SECRET_KEY" ]; then
-    echo "警告: QINIU_ACCESS_KEY 或 QINIU_SECRET_KEY 未设置，跳过 CDN 上传步骤"
-    echo "请设置环境变量后重新运行脚本"
+    echo "警告: QINIU_ACCESS_KEY 或 QINIU_SECRET_KEY 未设置"
 else
     # 设置 qshell 账户
     qshell account $QINIU_ACCESS_KEY $QINIU_SECRET_KEY everkm -w
 fi
 
 # 上传CDN
+COUNT=$(find $TARGET_DIR/assets/ -type f | wc -l)
+echo "上传CDN: $COUNT 个文件"
 qshell qupload2 \
+    --silence \
     --src-dir=$TARGET_DIR/assets/ \
     --key-prefix=yl-member/$YOULOG_DIR/assets/ \
     --bucket=dayu-assets \
@@ -65,11 +67,10 @@ qshell qupload2 \
     --skip-fixed-strings=.DS_Store
 
 # 第一步：压缩所有 HTML 文件为 .html.gz，保持目录结构，然后删除源文件
-echo "第一步：压缩所有 HTML 文件并删除源文件..."
 
 # 查找所有 HTML 文件并压缩
 find "$TARGET_DIR" -name "*.html" -type f | while read -r file; do
-    echo "处理文件: $file"
+    # echo "处理文件: $file"
 
     gzip -c "$file" > "$file.gz"
     
@@ -79,18 +80,15 @@ done
 
 
 # 第二步：将整个目标目录打包为 zip 文件，使用 Stored 模式（不压缩）
-echo "第二步：打包 $TARGET_DIR/$VERSION_DIR 目录为 zip 文件..."
 
 # 删除已存在的 zip 文件（如果存在）
 if [ -f "$CURRENT_DIR/$ZIP_NAME" ]; then
-    echo "删除已存在的 $CURRENT_DIR/$ZIP_NAME 文件"
     rm -f "$CURRENT_DIR/$ZIP_NAME"
 fi
 
 # 使用 zip 命令打包，-0 参数表示使用 Stored 模式（不压缩）
 # 从目标目录内部开始打包，这样 zip 文件中不会包含目标目录名
-echo "打包 $TARGET_DIR/$VERSION_DIR 目录为 $CURRENT_DIR/$ZIP_NAME"
-cd "$TARGET_DIR"/$VERSION_DIR/ && zip -0 -r "$CURRENT_DIR/$ZIP_NAME" . && cd $CURRENT_DIR
+cd "$TARGET_DIR"/$VERSION_DIR/ && zip -0 -r -q "$CURRENT_DIR/$ZIP_NAME" . && cd $CURRENT_DIR
 
 echo "打包完成！"
 

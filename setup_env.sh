@@ -32,10 +32,11 @@ else
 fi
 
 # download qshell
-# wget https://github.com/qiniu/qshell/releases/download/v2.16.1/qshell-v2.16.1-linux-arm64.tar.gz
-wget --quiet https://github.com/qiniu/qshell/releases/download/v${QSHELL_VERSION}/qshell-v${QSHELL_VERSION}-${QSHELL_SUFFIX}.tar.gz
-tar -zxvf qshell-v${QSHELL_VERSION}-${QSHELL_SUFFIX}.tar.gz
-# mv qshell-v2.16.1-${QSHELL_SUFFIX}/qshell ./qshell
+DOWNLOAD_URL="https://github.com/qiniu/qshell/releases/download/v${QSHELL_VERSION}/qshell-v${QSHELL_VERSION}-${QSHELL_SUFFIX}.tar.gz"
+echo "Downloading qshell from: $DOWNLOAD_URL"
+wget --quiet "$DOWNLOAD_URL" -O "qshell.tar.gz"
+tar -zxf "qshell.tar.gz"
+
 
 
 # 安装 everkm-publish
@@ -44,7 +45,7 @@ tar -zxvf qshell-v${QSHELL_VERSION}-${QSHELL_SUFFIX}.tar.gz
 # 拼接下载地址 https://github.com/everkm/publish/releases/download/everkm-publish%40v0.14.0/EverkmPublish_0.14._${EKMP_SUFFIX}.zip
 # 解析压缩包, 获取 EverkmPublish 文件
 
-echo "正在获取 everkm-publish 最新版本信息..."
+# echo "正在获取 everkm-publish 最新版本信息..."
 
 # 获取最新版本信息
 # LATEST_RELEASE=$(curl -s https://api.github.com/repos/everkm/publish/releases/latest)
@@ -57,13 +58,13 @@ echo "正在获取 everkm-publish 最新版本信息..."
 # 构建下载地址
 DOWNLOAD_URL="https://github.com/everkm/publish/releases/download/everkm-publish%40v${EVERKM_PUBLISH_VERSION}/EverkmPublish_${EVERKM_PUBLISH_VERSION}_${EKMP_SUFFIX}.zip"
 
-echo "下载地址: $DOWNLOAD_URL"
+echo "Downloading everkm-publish from: $DOWNLOAD_URL"
 
 # 下载文件
 wget --quiet "$DOWNLOAD_URL" -O "EverkmPublish_${EVERKM_PUBLISH_VERSION}_${EKMP_SUFFIX}.zip"
 
 # 解压文件
-unzip "EverkmPublish_${EVERKM_PUBLISH_VERSION}_${EKMP_SUFFIX}.zip"
+unzip -q "EverkmPublish_${EVERKM_PUBLISH_VERSION}_${EKMP_SUFFIX}.zip"
 
 # 移动 EverkmPublish 文件到当前目录
 mv EverkmPublish_${EVERKM_PUBLISH_VERSION}_${EKMP_SUFFIX}/everkm-publish ./everkm-publish
@@ -92,7 +93,9 @@ chmod +x ./everkm-publish
 # 构建下载地址
 # https://github.com/everkm/theme-youlog/releases/download/v0.2.3/youlog.zip
 DOWNLOAD_URL="https://github.com/everkm/theme-youlog/releases/download/v${THEME_YOULOG_VERSION}/youlog.zip"
+echo "Downloading theme-youlog from: $DOWNLOAD_URL"
 wget --quiet "$DOWNLOAD_URL" -O "youlog.zip"
 
-unzip "youlog.zip"
+unzip -q "youlog.zip"
 
+echo "Setup done"

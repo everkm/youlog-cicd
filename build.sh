@@ -58,6 +58,8 @@ fi
 
 
 
+export EVERKM_LOG=error
+
 everkm-publish serve \
 		--work-dir ./src/$SUB_DIR \
 		--base-prefix /$MEMBER/$YOULOG/v${YOULOG_VERSION}/ \
