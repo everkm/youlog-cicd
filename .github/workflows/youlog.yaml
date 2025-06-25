@@ -46,15 +46,18 @@ jobs:
         export QINIU_SECRET_KEY=${{ secrets.QINIU_SECRET_KEY }}
         make all-in-one MEMBER=${{ inputs.member }} YOULOG=${{ inputs.youlog }} VERSION=${{ inputs.version }} REPO=${{ inputs.repo }} TAG=${{ inputs.tag }} SUB_DIR=${{ inputs.sub_dir }}
 
+        ssh -i id_rsa_daobox -p 11022 root@y5.everkm.cn "mkdir -p /data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}"
+        scp -i id_rsa_daobox -P 11022 tmp/${{ inputs.youlog }}@v${{ inputs.version }}.zip root@y5.everkm.cn:/data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}/
 
-    - uses: addnab/docker-run-action@v3
-      with:
-        image: instrumentisto/rsync-ssh
-        options: -v ${{ github.workspace }}:/work -e ABC=123
-        run: |
-          echo "Running rsync"
-          cd /work/tmp
-          ssh -i /work/id_rsa_daobox -p 11022 root@y5.everkm.cn "mkdir -p /data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}"
-          scp -i /work/id_rsa_daobox -P 11022 ${{ inputs.youlog }}@v${{ inputs.version }}.zip root@y5.everkm.cn:/data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}/
+
+    # - uses: addnab/docker-run-action@v3
+    #   with:
+    #     image: instrumentisto/rsync-ssh
+    #     options: -v ${{ github.workspace }}:/work -e ABC=123
+    #     run: |
+    #       echo "Running rsync"
+    #       cd /work/tmp
+    #       ssh -i /work/id_rsa_daobox -p 11022 root@y5.everkm.cn "mkdir -p /data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}"
+    #       scp -i /work/id_rsa_daobox -P 11022 ${{ inputs.youlog }}@v${{ inputs.version }}.zip root@y5.everkm.cn:/data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}/
         
 
