@@ -44,8 +44,12 @@ if [ ! -d "$TARGET_DIR" ]; then
 fi
 
 
-# 如果 QINIU_ACCESS_KEY 和 QINIU_SECRET_KEY 未设置，则使用 qshell 登录
-if [ -z "$QINIU_ACCESS_KEY" ] && [ -z "$QINIU_SECRET_KEY" ]; then
+# 如果 QINIU_ACCESS_KEY 和 QINIU_SECRET_KEY 未设置，则跳过上传
+if [ -z "$QINIU_ACCESS_KEY" ] || [ -z "$QINIU_SECRET_KEY" ]; then
+    echo "警告: QINIU_ACCESS_KEY 或 QINIU_SECRET_KEY 未设置，跳过 CDN 上传步骤"
+    echo "请设置环境变量后重新运行脚本"
+else
+    # 设置 qshell 账户
     qshell account $QINIU_ACCESS_KEY $QINIU_SECRET_KEY everkm -w
 fi
 
@@ -59,7 +63,6 @@ qshell qupload2 \
     --check-hash  \
     --rescan-local=true \
     --skip-fixed-strings=.DS_Store
-
 
 # 第一步：压缩所有 HTML 文件为 .html.gz，保持目录结构，然后删除源文件
 echo "第一步：压缩所有 HTML 文件并删除源文件..."
