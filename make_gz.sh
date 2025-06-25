@@ -21,6 +21,7 @@ cd $BUILD_DIR
 echo "当前目录: $CURRENT_DIR"
 CURRENT_DIR=$(pwd)
 
+export PATH=$CURRENT_DIR:$PATH
 
 MEMBER="$1"
 YOULOG="$2"
