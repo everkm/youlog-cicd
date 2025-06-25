@@ -41,7 +41,7 @@ jobs:
 
     - name: dist
       run: |
-        echo "${{ secrets.SSH_KEY_DEPLOY }}" > id_rsa_daobox && chmod 600 id_rsa_daobox
+        echo "${{ secrets.SSH_KEY_DEPLOY_ED25519 }}" > id_rsa_daobox && chmod 600 id_rsa_daobox
         export QINIU_ACCESS_KEY=${{ secrets.QINIU_ACCESS_KEY }}
         export QINIU_SECRET_KEY=${{ secrets.QINIU_SECRET_KEY }}
         make all-in-one MEMBER=${{ inputs.member }} YOULOG=${{ inputs.youlog }} VERSION=${{ inputs.version }} REPO=${{ inputs.repo }} TAG=${{ inputs.tag }} SUB_DIR=${{ inputs.sub_dir }}
