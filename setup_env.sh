@@ -1,0 +1,75 @@
+#!/bin/bash
+
+set -e
+
+if [ -d "/Users/dayu/tmp/cicd" ]; then
+    rm -rf /Users/dayu/tmp/cicd
+fi
+mkdir -p /Users/dayu/tmp/cicd
+cd /Users/dayu/tmp/cicd
+
+# download qshell
+# wget https://github.com/qiniu/qshell/releases/download/v2.16.1/qshell-v2.16.1-linux-arm64.tar.gz
+wget https://github.com/qiniu/qshell/releases/download/v2.16.1/qshell-v2.16.1-darwin-arm64.tar.gz
+tar -zxvf qshell-v2.16.1-darwin-arm64.tar.gz
+# mv qshell-v2.16.1-darwin-arm64/qshell ./qshell
+
+
+# 安装 everkm-publish
+# https://api.github.com/repos/everkm/publish/releases/latest
+# 获取 `"tag_name": "everkm-publish@v0.14.0"` 中, v0.14.0 的值
+# 拼接下载地址 https://github.com/everkm/publish/releases/download/everkm-publish%40v0.14.0/EverkmPublish_0.14._darwin-universal.zip
+# 解析压缩包, 获取 EverkmPublish 文件
+
+echo "正在获取 everkm-publish 最新版本信息..."
+
+# 获取最新版本信息
+LATEST_RELEASE=$(curl -s https://api.github.com/repos/everkm/publish/releases/latest)
+
+# 提取 tag_name 中的版本号
+TAG_NAME=$(echo "$LATEST_RELEASE" | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
+VERSION=$(echo "$TAG_NAME" | sed 's/everkm-publish@v//')
+echo "Everkm-Publish 最新版本: $VERSION"
+
+# 构建下载地址
+DOWNLOAD_URL="https://github.com/everkm/publish/releases/download/everkm-publish%40v${VERSION}/EverkmPublish_${VERSION}_darwin-universal.zip"
+
+echo "下载地址: $DOWNLOAD_URL"
+
+# 下载文件
+wget "$DOWNLOAD_URL" -O "EverkmPublish_${VERSION}_darwin-universal.zip"
+
+# 解压文件
+unzip "EverkmPublish_${VERSION}_darwin-universal.zip"
+
+# 移动 EverkmPublish 文件到当前目录
+mv EverkmPublish_${VERSION}_darwin-universal/everkm-publish ./everkm-publish
+
+# 设置执行权限
+chmod +x ./everkm-publish
+
+
+
+# 下载 theme-youlog
+# latest: https://api.github.com/repos/everkm/theme-youlog/releases/latest
+# 获取 `"tag_name": "v0.1.0"` 中, v0.1.0 的值
+# 拼接下载地址 https://github.com/everkm/theme-youlog/releases/download/v0.1.0/theme-youlog-v0.1.0.zip
+# 解析压缩包, 获取 theme-youlog 文件
+
+echo "正在获取 theme-youlog 最新版本信息..."
+
+# 获取最新版本信息
+LATEST_RELEASE=$(curl -s https://api.github.com/repos/everkm/theme-youlog/releases/latest)
+
+# 提取 tag_name 中的版本号
+TAG_NAME=$(echo "$LATEST_RELEASE" | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
+VERSION=$(echo "$TAG_NAME" | sed 's/v//')
+echo "Theme-Youlog 最新版本: $VERSION"
+
+# 构建下载地址
+# https://github.com/everkm/theme-youlog/releases/download/v0.2.3/youlog.zip
+DOWNLOAD_URL="https://github.com/everkm/theme-youlog/releases/download/v${VERSION}/youlog.zip"
+wget "$DOWNLOAD_URL" -O "youlog.zip"
+
+unzip "youlog.zip"
+
