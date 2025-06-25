@@ -54,7 +54,7 @@ jobs:
         ssh-keyscan -p 11022 y5.everkm.com >> ~/.ssh/known_hosts
 
         ssh -i id_rsa_daobox -p 11022 root@y5.everkm.com "mkdir -p /data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}"
-        scp -i id_rsa_daobox -P 11022 ${{ inputs.youlog }}@${{ inputs.version }}.zip root@y5.everkm.com:/data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}/
+        scp -i id_rsa_daobox -P 11022 tmp/${{ inputs.youlog }}@${{ inputs.version }}.zip root@y5.everkm.com:/data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}/
 
     # - uses: addnab/docker-run-action@v3
     #   with:
