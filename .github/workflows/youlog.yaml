@@ -41,22 +41,27 @@ jobs:
 
     - name: dist
       run: |
-        echo "${{ secrets.SSH_KEY_DEPLOY_ED25519 }}" > id_rsa_daobox && chmod 600 id_rsa_daobox
+        # 准备 .ssh 目录
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+
+        # 配置 ssh 私钥
+        echo "${{ secrets.SSH_KEY_DEPLOY_ED25519 }}" > ~/.ssh/id_rsa_daobox && chmod 600 ~/.ssh/id_rsa_daobox
+        # 配置 known_hosts
+        touch ~/.ssh/known_hosts
+        chmod 600 ~/.ssh/known_hosts
+        echo "${{ secrets.Y5_EVERKM_COM_HOST_KEY }}" >> ~/.ssh/known_hosts
+
+
+        # 配置必要环境变量
         export QINIU_ACCESS_KEY=${{ secrets.QINIU_ACCESS_KEY }}
         export QINIU_SECRET_KEY=${{ secrets.QINIU_SECRET_KEY }}
 
         # 构建
         make all-in-one MEMBER=${{ inputs.member }} YOULOG=${{ inputs.youlog }} VERSION=${{ inputs.version }} REPO=${{ inputs.repo }} TAG=${{ inputs.tag }} SUB_DIR=${{ inputs.sub_dir }}
 
-        # 配置 ssh 密钥
-        mkdir -p ~/.ssh
-        chmod 700 ~/.ssh
-        touch ~/.ssh/known_hosts
-        chmod 600 ~/.ssh/known_hosts
-        echo "${{ secrets.Y5_EVERKM_COM_HOST_KEY }}" >> ~/.ssh/known_hosts
-
         # 部署
         echo "deploying to y5.everkm.com"
-        ssh -i id_rsa_daobox -p 11022 root@y5.everkm.com "mkdir -p /data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}"
-        scp -i id_rsa_daobox -P 11022 tmp/${{ inputs.youlog }}@${{ inputs.version }}.zip root@y5.everkm.com:/data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}/
+        ssh -i ~/.ssh/id_rsa_daobox -p 11022 root@y5.everkm.com "mkdir -p /data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}"
+        scp -i ~/.ssh/id_rsa_daobox -P 11022 tmp/${{ inputs.youlog }}@${{ inputs.version }}.zip root@y5.everkm.com:/data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}/
 
