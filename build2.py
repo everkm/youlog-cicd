@@ -11,10 +11,22 @@ from pathlib import Path
 import tempfile
 import urllib.parse
 import gzip
+import random
+import string
+import time
 
-def get_env_info(nonce, expires_at, job_id):
+def generate_nonce(length=16):
+    """生成指定长度的随机字符串"""
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
+
+def generate_expires_at():
+    """生成过期时间戳（当前时间 + 1分钟）"""
+    return int(time.time()) + 60
+
+def get_env_info(nonce, expires_at, job_id, api_origin):
     """从HTTP接口获取环境信息"""
-    url = "https://app-dev.dayu.me/api/cicd/deploy/env"
+    url = f"{api_origin}/api/cicd/deploy/env"
     headers = {
         "Content-Type": "application/json"
     }
@@ -202,14 +214,23 @@ def create_zip_package(target_dir, member_name, youlog, version, current_dir):
         return None
 
 def main():
-    if len(sys.argv) != 4:
-        print("用法: python3 build2.py <nonce> <expires_at> <job_id>")
-        print("示例: python3 build2.py abc123def456ghi789 1735689600 5TrIp3tDyi")
+    if len(sys.argv) != 3:
+        print("用法: python3 build2.py <job_id> <api_origin>")
+        print("示例: python3 build2.py 5TrIp3tDyi https://app-dev.dayu.me")
         sys.exit(1)
     
-    nonce = sys.argv[1]
-    expires_at = int(sys.argv[2])
-    job_id = sys.argv[3]
+    job_id = sys.argv[1]
+    api_origin = sys.argv[2]
+    
+    # 内部生成 nonce 和 expires_at
+    nonce = generate_nonce(16)
+    expires_at = generate_expires_at()
+    
+    print(f"生成的参数:")
+    print(f"  nonce: {nonce}")
+    print(f"  expires_at: {expires_at}")
+    print(f"  job_id: {job_id}")
+    print(f"  api_origin: {api_origin}")
     
     current_dir = Path.cwd()
     build_dir = current_dir / "tmp"
@@ -223,7 +244,7 @@ def main():
     
     # 获取环境信息
     print("正在从API获取环境信息...")
-    response_data = get_env_info(nonce, expires_at, job_id)
+    response_data = get_env_info(nonce, expires_at, job_id, api_origin)
     
     if response_data.get("code") != "ok":
         print(f"API返回错误: {response_data}")

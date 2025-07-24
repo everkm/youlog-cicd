@@ -3,23 +3,11 @@ name: CICD
 on:
   workflow_dispatch:
     inputs:
-      member:
-        description: 'Member'
+      job_id:
+        description: 'Job ID'
         required: true
-      youlog:
-        description: 'Youlog'
-        required: true
-      version:
-        description: 'Version'
-        required: true
-      repo:
-        description: 'Repo'
-        required: true
-      tag:
-        description: 'Tag'
-        required: true
-      sub_dir:
-        description: 'Sub Dir'
+      api_origin:
+        description: 'API Origin'
         required: true
 
 jobs:
@@ -58,7 +46,7 @@ jobs:
         export QINIU_SECRET_KEY=${{ secrets.QINIU_SECRET_KEY }}
 
         # 构建
-        make all-in-one MEMBER=${{ inputs.member }} YOULOG=${{ inputs.youlog }} VERSION=${{ inputs.version }} REPO=${{ inputs.repo }} TAG=${{ inputs.tag }} SUB_DIR=${{ inputs.sub_dir }}
+        python3 build2.py ${{ inputs.job_id }} ${{ inputs.api_origin }}
 
         # 部署
         echo "deploying to y5.everkm.com"
