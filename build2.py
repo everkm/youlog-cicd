@@ -251,11 +251,16 @@ def main():
     if response_data.get("code") != "ok":
         print(f"API返回错误: {response_data}")
         sys.exit(1)
+        
+    # 写入环境信息到文件
+    with open("env.json", "w") as f:
+        json.dump(response_data, f, indent=4)
     
     body = response_data.get("body", {})
     member_name = body.get("member_name")
     youlog = body.get("youlog")
     version = body.get("version")
+    version_prefix = body.get("version_prefix")
     git_repo = body.get("git_repo")
     uploaded_content = body.get("uploaded_content")
     sub_dir = body.get("sub_dir")
@@ -264,6 +269,7 @@ def main():
     print(f"  member_name: {member_name}")
     print(f"  youlog: {youlog}")
     print(f"  version: {version}")
+    print(f"  version_prefix: {version_prefix}")
     print(f"  git_repo: {git_repo}")
     print(f"  uploaded_content: {uploaded_content}")
     print(f"  sub_dir: {sub_dir}")
@@ -298,13 +304,20 @@ def main():
 
     # 第二部分：执行everkm-publish编译页面
     print("\n=== 第二部分：编译页面 ===")
+    
+    # release_version 是 youlog 的版本号, 不包含tag前缀
+    # 从 version 中去掉前缀得到 release_version
+    if version.startswith(version_prefix):
+        release_version = version[len(version_prefix):]
+    else:
+        release_version = version
 
     # 构建参数
     if sub_dir:
         work_dir = str(src_dir / zip_basename / sub_dir)
     else:
         work_dir = str(src_dir / zip_basename)
-    base_prefix = f"/{member_name}/{youlog}/v{version}/"
+    base_prefix = f"/{member_name}/{youlog}/v{release_version}/"
     cdn_prefix = f"https://assets.daobox.cc/yl-member/{member_name}/{youlog}/"
     theme_dir = str(build_dir / "youlog")
     dist_dir = str(build_dir / "dist-pages")
@@ -335,7 +348,7 @@ def main():
     
     # 创建ZIP包
     print("开始创建ZIP包...")
-    zip_path = create_zip_package(dist_dir, member_name, youlog, version, current_dir)
+    zip_path = create_zip_package(dist_dir, member_name, youlog, release_version, current_dir)
     
     # 显示最终统计信息
     if zip_path and zip_path.exists():

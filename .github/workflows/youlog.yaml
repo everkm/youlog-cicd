@@ -26,6 +26,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    # <https://github.com/actions/setup-python>
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+        cache: 'pip' # caching pip dependencies
+    - run: pip install -r requirements.txt      
 
     - name: dist
       run: |
@@ -46,7 +52,8 @@ jobs:
         export QINIU_SECRET_KEY=${{ secrets.QINIU_SECRET_KEY }}
 
         # 构建
-        python3 build2.py ${{ inputs.job_id }} ${{ inputs.api_origin }}
+        ./setup_env.sh
+        python3 build2.py ${{ inputs.job_id }} ${{ inputs.api_origin }} 2>&1 | tee deploy.log
 
         # 部署
         echo "deploying to y5.everkm.com"

@@ -56,6 +56,7 @@ POST {api_origin}/api/cicd/deploy/env
         "member_name": "jcoldyu",
         "youlog": "asdf",
         "version": "v3",
+        "version_prefix": "v",
         "git_repo": "",
         "uploaded_content": null,
         "sub_dir": ""
