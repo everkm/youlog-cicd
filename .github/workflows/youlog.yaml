@@ -34,6 +34,7 @@ jobs:
     - run: pip install -r requirements.txt      
 
     - name: dist
+      id: dist
       run: |
         # 准备 .ssh 目录
         mkdir -p ~/.ssh
@@ -46,7 +47,6 @@ jobs:
         chmod 600 ~/.ssh/known_hosts
         echo "${{ secrets.Y5_EVERKM_COM_HOST_KEY }}" >> ~/.ssh/known_hosts
 
-
         # 配置必要环境变量
         export QINIU_ACCESS_KEY=${{ secrets.QINIU_ACCESS_KEY }}
         export QINIU_SECRET_KEY=${{ secrets.QINIU_SECRET_KEY }}
@@ -55,8 +55,32 @@ jobs:
         ./setup_env.sh
         python3 build2.py ${{ inputs.job_id }} ${{ inputs.api_origin }} 2>&1 | tee deploy.log
 
+        # 从.env文件读取变量
+        if [ -f .env ]; then
+          source .env
+          echo "member_name=$MEMBER_NAME" >> $GITHUB_OUTPUT
+          echo "youlog=$YOULOG" >> $GITHUB_OUTPUT
+          echo "version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+        fi
+
         # 部署
         echo "deploying to y5.everkm.com"
-        ssh -i ~/.ssh/id_rsa_daobox -p 11022 root@y5.everkm.com "mkdir -p /data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}"
-        scp -i ~/.ssh/id_rsa_daobox -P 11022 tmp/${{ inputs.youlog }}@${{ inputs.version }}.zip root@y5.everkm.com:/data/www/youlog-www/${{ inputs.member }}/${{ inputs.youlog }}/
+        ssh -i ~/.ssh/id_rsa_daobox -p 11022 root@y5.everkm.com "mkdir -p /data/www/youlog-www/$MEMBER_NAME/$YOULOG"
+        scp -i ~/.ssh/id_rsa_daobox -P 11022 tmp/$YOULOG@$RELEASE_VERSION.zip root@y5.everkm.com:/data/www/youlog-www/$MEMBER_NAME/$YOULOG/
+
+    - name: report
+      if: always()
+      run: |
+        # 检查是否有.env和deploy.log
+        if [ -f .env ] && [ -f deploy.log ]; then
+          # 调用report.py上传结果
+          # 如果dist步骤成功，is_success=true；如果失败，is_success=false
+          if [ "${{ steps.dist.outcome }}" == "success" ]; then
+            python3 report.py ${{ inputs.api_origin }} true
+          else
+            python3 report.py ${{ inputs.api_origin }} false
+          fi
+        else
+          echo ".env 或 deploy.log 不存在，跳过报告上传"
+        fi
 

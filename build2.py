@@ -256,6 +256,22 @@ def main():
     with open("env.json", "w") as f:
         json.dump(response_data, f, indent=4)
     
+    # 同时生成.env文件，方便后续步骤使用
+    with open(".env", "w") as f:
+        f.write(f"MEMBER_NAME={member_name}\n")
+        f.write(f"YOULOG={youlog}\n")
+        f.write(f"VERSION={version}\n")
+        f.write(f"VERSION_PREFIX={version_prefix}\n")
+        f.write(f"GIT_REPO={git_repo or ''}\n")
+        f.write(f"UPLOADED_CONTENT={uploaded_content or ''}\n")
+        f.write(f"SUB_DIR={sub_dir or ''}\n")
+        # 计算release_version（去除前缀）
+        if version.startswith(version_prefix):
+            release_version = version[len(version_prefix):]
+        else:
+            release_version = version
+        f.write(f"RELEASE_VERSION={release_version}\n")
+    
     body = response_data.get("body", {})
     member_name = body.get("member_name")
     youlog = body.get("youlog")
