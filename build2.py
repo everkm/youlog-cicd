@@ -86,7 +86,7 @@ def generate_release_url(git_repo, version):
 def run_everkm_publish(work_dir, base_prefix, cdn_prefix, theme_dir, dist_dir):
     """执行everkm-publish命令"""
     cmd = [
-        "everkm-publish", "serve",
+        "./tmp/everkm-publish", "serve",
         "--work-dir", work_dir,
         "--base-prefix", base_prefix,
         "--cdn-prefix", cdn_prefix,
@@ -103,10 +103,12 @@ def run_everkm_publish(work_dir, base_prefix, cdn_prefix, theme_dir, dist_dir):
         print("正在执行 everkm-publish...")
         result = subprocess.run(cmd, env=env, check=True, capture_output=True, text=True)
         print("everkm-publish 执行成功")
+        print(result.stdout)
         return result.stdout
     except subprocess.CalledProcessError as e:
         print(f"everkm-publish 执行失败: {e}")
-        print(f"错误输出: {e.stderr}")
+        print(f"标准输出(stdout): {e.stdout}")
+        print(f"错误输出(stderr): {e.stderr}")
         sys.exit(1)
 
 def count_html_files(dist_dir):
@@ -126,7 +128,7 @@ def upload_to_cdn(target_dir, member_name, youlog):
     # 设置 qshell 账户
     try:
         subprocess.run([
-            "qshell", "account", qiniu_access_key, qiniu_secret_key, "everkm", "-w"
+            "./qshell", "account", qiniu_access_key, qiniu_secret_key, "everkm", "-w"
         ], check=True, capture_output=True)
     except subprocess.CalledProcessError as e:
         print(f"设置 qshell 账户失败: {e}")
@@ -141,7 +143,7 @@ def upload_to_cdn(target_dir, member_name, youlog):
         # 执行上传
         try:
             subprocess.run([
-                "qshell", "qupload2",
+                "./qshell", "qupload2",
                 "--silence",
                 "--src-dir", str(assets_dir),
                 "--key-prefix", f"yl-member/{member_name}/{youlog}/assets/",
@@ -285,12 +287,23 @@ def main():
     
     # 下载并解压zip文件
     download_and_extract_zip(zip_url, src_dir)
-    
+
+    # 自动检测 src 下的唯一一级目录作为 zip_basename
+    entries = [e for e in src_dir.iterdir() if e.is_dir()]
+    if len(entries) == 1:
+        zip_basename = entries[0].name
+    else:
+        print(f"src 目录下有多个文件或目录，不确定一级目录名。实际内容: {[e.name for e in src_dir.iterdir()]}")
+        sys.exit(1)
+
     # 第二部分：执行everkm-publish编译页面
     print("\n=== 第二部分：编译页面 ===")
-    
+
     # 构建参数
-    work_dir = str(src_dir / sub_dir) if sub_dir else str(src_dir)
+    if sub_dir:
+        work_dir = str(src_dir / zip_basename / sub_dir)
+    else:
+        work_dir = str(src_dir / zip_basename)
     base_prefix = f"/{member_name}/{youlog}/v{version}/"
     cdn_prefix = f"https://assets.daobox.cc/yl-member/{member_name}/{youlog}/"
     theme_dir = str(build_dir / "youlog")
