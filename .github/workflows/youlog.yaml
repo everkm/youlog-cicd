@@ -60,13 +60,14 @@ jobs:
           source .env
           echo "member_name=$MEMBER_NAME" >> $GITHUB_OUTPUT
           echo "youlog=$YOULOG" >> $GITHUB_OUTPUT
-          echo "version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version_tag=$VERSION_TAG" >> $GITHUB_OUTPUT
         fi
 
         # 部署
         echo "deploying to y5.everkm.com"
         ssh -i ~/.ssh/id_rsa_daobox -p 11022 root@y5.everkm.com "mkdir -p /data/www/youlog-www/$MEMBER_NAME/$YOULOG"
-        scp -i ~/.ssh/id_rsa_daobox -P 11022 tmp/$YOULOG@$RELEASE_VERSION.zip root@y5.everkm.com:/data/www/youlog-www/$MEMBER_NAME/$YOULOG/
+        scp -i ~/.ssh/id_rsa_daobox -P 11022 tmp/$YOULOG@$VERSION.zip root@y5.everkm.com:/data/www/youlog-www/$MEMBER_NAME/$YOULOG/
 
     - name: report
       if: always()

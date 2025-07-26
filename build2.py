@@ -260,6 +260,9 @@ def main():
     git_repo = body.get("git_repo")
     uploaded_content = body.get("uploaded_content")
     sub_dir = body.get("sub_dir")
+    
+    # 生成版本tag
+    version_tag = f"{version_prefix}@{version}"
         
     # 写入环境信息到文件
     with open("env.json", "w") as f:
@@ -274,12 +277,7 @@ def main():
         f.write(f"GIT_REPO={git_repo or ''}\n")
         f.write(f"UPLOADED_CONTENT={uploaded_content or ''}\n")
         f.write(f"SUB_DIR={sub_dir or ''}\n")
-        # 计算release_version（去除前缀）
-        if version.startswith(version_prefix):
-            release_version = version[len(version_prefix):]
-        else:
-            release_version = version
-        f.write(f"RELEASE_VERSION={release_version}\n")
+        f.write(f"VERSION_TAG={version_tag}\n")
     
 
     
@@ -297,7 +295,7 @@ def main():
         zip_url = uploaded_content
         print(f"使用上传的内容URL: {zip_url}")
     elif git_repo and version:
-        zip_url = generate_release_url(git_repo, version)
+        zip_url = generate_release_url(git_repo, version_tag)
         print(f"使用生成的release URL: {zip_url}")
     else:
         print("错误: 既没有uploaded_content也没有git_repo和version")
@@ -323,19 +321,14 @@ def main():
     # 第二部分：执行everkm-publish编译页面
     print("\n=== 第二部分：编译页面 ===")
     
-    # release_version 是 youlog 的版本号, 不包含tag前缀
-    # 从 version 中去掉前缀得到 release_version
-    if version.startswith(version_prefix):
-        release_version = version[len(version_prefix):]
-    else:
-        release_version = version
+
 
     # 构建参数
     if sub_dir:
         work_dir = str(src_dir / zip_basename / sub_dir)
     else:
         work_dir = str(src_dir / zip_basename)
-    base_prefix = f"/{member_name}/{youlog}/v{release_version}/"
+    base_prefix = f"/{member_name}/{youlog}/v{version}/"
     cdn_prefix = f"https://assets.daobox.cc/yl-member/{member_name}/{youlog}/"
     theme_dir = str(build_dir / "youlog")
     dist_dir = str(build_dir / "dist-pages")
@@ -366,7 +359,7 @@ def main():
     
     # 创建ZIP包
     print("开始创建ZIP包...")
-    zip_path = create_zip_package(dist_dir, member_name, youlog, release_version, build_dir)
+    zip_path = create_zip_package(dist_dir, member_name, youlog, version, build_dir)
     
     # 显示最终统计信息
     if zip_path and zip_path.exists():
