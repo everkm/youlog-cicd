@@ -1,4 +1,4 @@
-name: CICD
+name: youlog
 
 on:
   workflow_dispatch:
