@@ -252,6 +252,15 @@ def main():
         print(f"API返回错误: {response_data}")
         sys.exit(1)
         
+    body = response_data.get("body", {})
+    member_name = body.get("member_name")
+    youlog = body.get("youlog")
+    version = body.get("version")
+    version_prefix = body.get("version_prefix")
+    git_repo = body.get("git_repo")
+    uploaded_content = body.get("uploaded_content")
+    sub_dir = body.get("sub_dir")
+        
     # 写入环境信息到文件
     with open("env.json", "w") as f:
         json.dump(response_data, f, indent=4)
@@ -272,14 +281,7 @@ def main():
             release_version = version
         f.write(f"RELEASE_VERSION={release_version}\n")
     
-    body = response_data.get("body", {})
-    member_name = body.get("member_name")
-    youlog = body.get("youlog")
-    version = body.get("version")
-    version_prefix = body.get("version_prefix")
-    git_repo = body.get("git_repo")
-    uploaded_content = body.get("uploaded_content")
-    sub_dir = body.get("sub_dir")
+
     
     print(f"获取到环境信息:")
     print(f"  member_name: {member_name}")
