@@ -128,7 +128,7 @@ def upload_to_cdn(target_dir, member_name, youlog):
     # 设置 qshell 账户
     try:
         subprocess.run([
-            "./qshell", "account", qiniu_access_key, qiniu_secret_key, "everkm", "-w"
+            "./tmp/qshell", "account", qiniu_access_key, qiniu_secret_key, "everkm", "-w"
         ], check=True, capture_output=True)
     except subprocess.CalledProcessError as e:
         print(f"设置 qshell 账户失败: {e}")
