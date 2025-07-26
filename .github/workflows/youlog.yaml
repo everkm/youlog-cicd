@@ -9,6 +9,9 @@ on:
       api_origin:
         description: 'API Origin'
         required: true
+      secret:
+        description: 'Secret'
+        required: true
 
 jobs:
   build:
