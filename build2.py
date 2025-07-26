@@ -262,7 +262,7 @@ def main():
     sub_dir = body.get("sub_dir")
     
     # 生成版本tag
-    version_tag = f"{version_prefix}@{version}"
+    version_tag = f"{version_prefix}{version}"
         
     # 写入环境信息到文件
     with open("env.json", "w") as f:
