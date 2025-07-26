@@ -69,8 +69,8 @@ jobs:
 
         # 部署
         echo "deploying to y5.everkm.com"
-        ssh -i ~/.ssh/id_rsa_daobox -p 11022 root@y5.everkm.com "mkdir -p /data/www/youlog-www/$MEMBER_NAME/$YOULOG"
-        scp -i ~/.ssh/id_rsa_daobox -P 11022 tmp/$YOULOG@$VERSION.zip root@y5.everkm.com:/data/www/youlog-www/$MEMBER_NAME/$YOULOG/
+        ssh -i ~/.ssh/id_rsa_daobox -p 11022 root@y5.everkm.com "mkdir -p /data/www/youlog_member_data/$MEMBER_NAME/$YOULOG"
+        scp -i ~/.ssh/id_rsa_daobox -P 11022 tmp/$YOULOG@$VERSION.zip root@y5.everkm.com:/data/www/youlog_member_data/$MEMBER_NAME/$YOULOG/
 
     - name: report
       if: always()
