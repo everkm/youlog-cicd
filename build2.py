@@ -366,7 +366,7 @@ def main():
     
     # 创建ZIP包
     print("开始创建ZIP包...")
-    zip_path = create_zip_package(dist_dir, member_name, youlog, release_version, current_dir)
+    zip_path = create_zip_package(dist_dir, member_name, youlog, release_version, build_dir)
     
     # 显示最终统计信息
     if zip_path and zip_path.exists():
