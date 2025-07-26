@@ -143,7 +143,7 @@ def upload_to_cdn(target_dir, member_name, youlog):
         # 执行上传
         try:
             subprocess.run([
-                "./qshell", "qupload2",
+                "./tmp/qshell", "qupload2",
                 "--silence",
                 "--src-dir", str(assets_dir),
                 "--key-prefix", f"yl-member/{member_name}/{youlog}/assets/",
